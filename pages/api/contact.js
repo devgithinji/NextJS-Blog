@@ -17,8 +17,10 @@ const handler = async (req, res) => {
 
         let client;
 
+        const connectionString = `mongodb+srv://${process.env.mongodb_username}:${process.env.mongodb_password}@${process.env.mongodb_clustername}.lorgx6p.mongodb.net/${process.env.mongodb_database}?retryWrites=true&w=majority`
+
         try {
-            client = await MongoClient.connect('mongodb+srv://user:Densoft1@cluster0.lorgx6p.mongodb.net/next-blog?retryWrites=true&w=majority');
+            client = await MongoClient.connect(connectionString);
         } catch (e) {
             res.status(500).json({message: 'Could not connect to database'})
             return;
@@ -29,7 +31,7 @@ const handler = async (req, res) => {
         try {
             const result = await db.collection('messages').insertOne(newMessage)
             newMessage.id = result.insertedId;
-        }catch (e) {
+        } catch (e) {
             await client.close()
             res.status(500).json({message: 'Storing message failed'})
             return;
